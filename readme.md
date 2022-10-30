@@ -7,6 +7,13 @@ This is a Neknaj metavarce project.
 ## Related repositories  
 - [neknaj 3d library](https://github.com/neknaj/3d)
 
+## Requirements
+### Server
+- Node.js
+  - http
+  - fs
+  - socket.io
+
 ## Langage  
 ### Server  
 - Node.js
@@ -15,4 +22,11 @@ This is a Neknaj metavarce project.
 - css
 - javascript
 
-## Now nothing in this repo.
+## Usage
+### Server
+Open the console and
+```
+node server.js
+```
+### Client
+Open the Web-Browser and open the server's URL
