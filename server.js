@@ -1,8 +1,13 @@
+const port = 8080;
+const socketport = 8081;
 const http = require("http");
 const fs = require('fs');
 const path = require('path');
-const port = 8080;
 const server = http.createServer(server_request);
+const socket = require('socket.io')(socketport);
+
+server.listen(port);
+console.log(`The server has started and is listening on port number: ${port}`);
 
 function server_request(req, res) {
     let head = {
@@ -58,5 +63,15 @@ function server_request(req, res) {
     res.end(resd);
 }
 
-server.listen(port);
-console.log(`The server has started and is listening on port number: ${port}`);
+socket.on('connection', function (req) {
+
+  socket.emit("sendMessageToClient", {value:"a connection"});
+
+  req.on("sendMessageToServer", function (data) {
+      io.emit("sendMessageToClient", {value:data.value});
+  });     
+
+  req.on("disconnect", function () {
+      io.emit("sendMessageToClient", {value:"a disconnection"});
+  });
+});
