@@ -1,7 +1,6 @@
 const port = 8080;
 const http = require("http");
 const fs = require('fs');
-const path = require('path');
 const server = http.createServer(server_request);
 server.listen(port);
 const socket = require('socket.io')(server);
@@ -23,41 +22,38 @@ function server_request(req, res) {
     }
 
     let resd = "";
+    let nfflag = false;
     switch (req.url) {
       case "/": // title page
         resd += "<h1>Neknaj Virtual World</h1>";
         resd += "<a href=\"/world\">open!</a>";
       break;
       case "/world": // main page
-        resd += "comming soon";
-        resd += "<a href=\"/\">top</a>";
-        resd += "<script src=\"/socket.io/socket.io.js\"></script>";
-        resd += "<script>const socket = io();</script>";
+      try {
+          resd += fs.readFileSync("data/world.html", 'utf8');
+      } catch (e) {nfflag=true;}
       break;
       case "/3d.js": // 3d library
         try {
-            var text = fs.readFileSync("data/3d.js", 'utf8');
+            resd += fs.readFileSync("data/3d.js", 'utf8');
             head["Content-Type"] = "application/javascript";
-            resd += text;
-        } catch (e) {
-            resd += "<h1>Not found</h1>";
-            resd += "<p>";
-            resd += "url: ";
-            resd += req.url;
-            resd += "</p>";
-        }
+        } catch (e) {nfflag=true;}
       break;
       case "/getworld": // get world data
         resd += "comming soon";
         resd += "<a href=\"/\">top</a>";
       break;
       default: // not found
-        resd += "<h1>Not found</h1>";
-        resd += "<p>";
-        resd += "url: ";
-        resd += req.url;
-        resd += "</p>";
+        nfflag = true;
       break;
+    }
+    if (nfflag) {
+      rescode = 404;
+      resd += "<h1>Not found</h1>";
+      resd += "<p>";
+      resd += "url: ";
+      resd += req.url;
+      resd += "</p>";
     }
     res.writeHead(rescode, head);
     res.end(resd);
