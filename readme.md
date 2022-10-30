@@ -5,7 +5,11 @@
 This is a Neknaj metavarce project.
 
 ## Langage  
-### Server Side  
+### Server  
 - Node.js
+### Client(Browser)  
+- html
+- css
+- javascript
 
 ## Now nothing in this repo.
