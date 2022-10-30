@@ -1,12 +1,10 @@
 const port = 8080;
-const socketport = 8081;
 const http = require("http");
 const fs = require('fs');
 const path = require('path');
 const server = http.createServer(server_request);
-const socket = require('socket.io')(socketport);
-
 server.listen(port);
+const socket = require('socket.io')(server);
 console.log(`The server has started and is listening on port number: ${port}`);
 
 function server_request(req, res) {
@@ -33,6 +31,8 @@ function server_request(req, res) {
       case "/world": // main page
         resd += "comming soon";
         resd += "<a href=\"/\">top</a>";
+        resd += "<script src=\"/socket.io/socket.io.js\"></script>";
+        resd += "<script>const socket = io();</script>";
       break;
       case "/3d.js": // 3d library
         try {
@@ -65,13 +65,16 @@ function server_request(req, res) {
 
 socket.on('connection', function (req) {
 
+  console.log("a connection");
+
   socket.emit("sendMessageToClient", {value:"a connection"});
 
   req.on("sendMessageToServer", function (data) {
-      io.emit("sendMessageToClient", {value:data.value});
+    socket.emit("sendMessageToClient", {value:data.value});
   });     
 
   req.on("disconnect", function () {
-      io.emit("sendMessageToClient", {value:"a disconnection"});
+      console.log("a disconnection");
+      socket.emit("sendMessageToClient", {value:"a disconnection"});
   });
 });
