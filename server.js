@@ -25,8 +25,9 @@ function server_request(req, res) {
     let nfflag = false;
     switch (req.url) {
       case "/": // title page
-        resd += "<h1>Neknaj Virtual World</h1>";
-        resd += "<a href=\"/world\">open!</a>";
+      try {
+          resd += fs.readFileSync("data/top.html", 'utf8');
+      } catch (e) {nfflag=true;}
       break;
       case "/world": // main page
       try {
