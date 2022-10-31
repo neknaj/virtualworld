@@ -12,18 +12,12 @@ function server_request(req, res) {
     }
     let rescode = 200;
 
-    console.log(req.url);
-    if (req.url.split(".")[0]=="/index") { // redirect
-        head["Location"] = "/";rescode = 302;
-        res.writeHead(rescode, head);
-        res.end("");
-        console.log("redirected to the top");
-        return;
-    }
-
     let resd = "";
     let nfflag = false;
-    switch (req.url) {
+    switch (req.url.split(".")[0]) {
+      case "/index": // title page
+      head["Location"] = "/";rescode = 302;
+      break;
       case "/": // title page
       try {
           resd += fs.readFileSync("data/top.html", 'utf8');
@@ -34,7 +28,7 @@ function server_request(req, res) {
           resd += fs.readFileSync("data/world.html", 'utf8');
       } catch (e) {nfflag=true;}
       break;
-      case "/3d.js": // 3d library
+      case "/3d": // 3d library
         try {
             resd += fs.readFileSync("data/3d.js", 'utf8');
             head["Content-Type"] = "application/javascript";
