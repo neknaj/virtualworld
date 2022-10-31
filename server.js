@@ -34,6 +34,12 @@ function server_request(req, res) {
             head["Content-Type"] = "application/javascript";
         } catch (e) {nfflag=true;}
       break;
+      case "/style": // style
+        try {
+            resd += fs.readFileSync("data/style.css", 'utf8');
+            head["Content-Type"] = "text/css";
+        } catch (e) {nfflag=true;}
+      break;
       case "/getworld": // get world data
         resd += "comming soon";
         resd += "<a href=\"/\">top</a>";
