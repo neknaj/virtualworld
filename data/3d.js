@@ -19,17 +19,18 @@ class tdDRAW {
     }
 
     getImg() {
-        this.sortPolygon();
+        //this.sortPolygon();
         this.frame++;
         let x = this.display[0];
         let y = this.display[1];
+        let maxlen = 100;
         let iarr = new Uint8ClampedArray(x*y*4).fill(0);
-        let zbuf = new Uint8Array(x*y).fill(0);
+        let zbuf = new Array(x*y).fill(maxlen);
         for (let i = 0; i < x*y; i++) {
             iarr[i*4+3] = 255;
         }
         let polygons = this.obj;
-        let vl = this.VNormalized([40,50,50]); // 平行光源
+        let vl = this.VNormalized([40,50,20]); // 平行光源
         this.trifv = [Math.sin(this.camangle[0]),Math.cos(this.camangle[0]),Math.sin(-this.camangle[1]),Math.cos(this.camangle[1])];
         for (let i=0;i<polygons.length;i++) {
             let t = polygons[i];
@@ -56,13 +57,24 @@ class tdDRAW {
             for (let iy = ymin; iy < ymax; iy++) {
                 for (let ix = xmin; ix < xmax; ix++) {
                     let idex = iy*x+ix; // 描画するアドレス
-                    if (zbuf[idex]==0) { // 既に描画されていない確認
+                    if (true) { // 既に描画されていない確認
                         if (this.inclusion([ix,iy],[p1,p2,p3])) { // 三角形の内外判定
-                            zbuf[idex] = 1; // ピクセルの描画済みフラグ
-                            let index = idex*4;
-                            iarr[index+0] = t[3][0]*light; // 赤の描画
-                            iarr[index+1] = t[3][1]*light; // 緑の描画
-                            iarr[index+2] = t[3][2]*light; // 青の描画
+                            let td = this.is_p( [p1,[ix,iy]],[p2,p3]);
+
+                            let a = this.length3d([this.campos,t[0]]);
+                            let b = this.length3d([this.campos,t[1]]);
+                            let c = this.length3d([this.campos,t[2]]);
+                            let d = b+(this.length2d([p2,td])/this.length2d([p2,p3]))*(c-b);
+                            let p = a+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(d-a);
+
+                            if (zbuf[idex]>p) {
+                                zbuf[idex] = p;
+                                let index = idex*4;
+                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000/(p**2+1000)); // 面と平行光源の角度
+                                iarr[index+0] = t[3][0]*light; // 赤の描画
+                                iarr[index+1] = t[3][1]*light; // 緑の描画
+                                iarr[index+2] = t[3][2]*light; // 青の描画
+                            }
                         }
                     }
                 }
@@ -111,11 +123,26 @@ class tdDRAW {
     gcot(t3ds) {
         return [(t3ds[0][0]+t3ds[1][0]+t3ds[2][0])/3,(t3ds[0][1]+t3ds[1][1]+t3ds[2][1])/3,(t3ds[0][2]+t3ds[1][2]+t3ds[2][2])/3];
     }
+    
+    is_p(l1, l2) { // intersection point from 2 lines
+        if (l1[0][0]==l1[1][0]) {l1[0][0]+=0.01;}
+        if (l2[0][0]==l2[1][0]) {l2[0][0]+=0.01;}
+        let a1 = (l1[1][1]-l1[0][1])/(l1[1][0]-l1[0][0]);
+        let b1 = l1[0][1]-a1*l1[0][0];
+        let a2 = (l2[1][1]-l2[0][1])/(l2[1][0]-l2[0][0]);
+        let b2 = l2[0][1]-a2*l2[0][0];
+        let x = (b2-b1)/(a1-a2);
+        let y = a1*x+b1;
+        return [x,y];
+    };
     squared_length3d(pos) {
         return (pos[0][0]-pos[1][0])**2+(pos[0][1]-pos[1][1])**2+(pos[0][2]-pos[1][2])**2;
     }
     length3d(pos) {
         return Math.sqrt((pos[0][0]-pos[1][0])**2+(pos[0][1]-pos[1][1])**2+(pos[0][2]-pos[1][2])**2);
+    }
+    length2d(pos) {
+        return Math.sqrt( (pos[0][0]-pos[1][0])**2+(pos[0][1]-pos[1][1])**2 );
     }
 
     VCProduct(a,b) { // Vector-Cross-Product ベクトルの外積
