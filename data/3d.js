@@ -19,7 +19,7 @@ class tdDRAW {
     }
 
     getImg() {
-        //this.sortPolygon();
+        this.sortPolygon();
         this.frame++;
         let x = this.display[0];
         let y = this.display[1];
@@ -30,7 +30,7 @@ class tdDRAW {
             iarr[i*4+3] = 255;
         }
         let polygons = this.obj;
-        let vl = this.VNormalized([40,50,20]); // 平行光源
+        let vl = this.VNormalized([30,10,20]); // 平行光源
         this.trifv = [Math.sin(this.camangle[0]),Math.cos(this.camangle[0]),Math.sin(-this.camangle[1]),Math.cos(this.camangle[1])];
         for (let i=0;i<polygons.length;i++) {
             let t = polygons[i];
@@ -40,7 +40,7 @@ class tdDRAW {
             let p2 = this.pos_3t2d(t[1]);
             let p3 = this.pos_3t2d(t[2]);
 
-            if (p1[2]&&p2[2]&&p3[2]) {continue;}
+            //if (p1[2]&&p2[2]&&p3[2]) {continue;}
 
             let v12 = [t[1][0]-t[0][0],t[1][1]-t[0][1],t[1][2]-t[0][2]];
             let v13 = [t[2][0]-t[0][0],t[2][1]-t[0][1],t[2][2]-t[0][2]];
@@ -61,16 +61,22 @@ class tdDRAW {
                         if (this.inclusion([ix,iy],[p1,p2,p3])) { // 三角形の内外判定
                             let td = this.is_p( [p1,[ix,iy]],[p2,p3]);
 
-                            let a = this.length3d([this.campos,t[0]]);
-                            let b = this.length3d([this.campos,t[1]]);
-                            let c = this.length3d([this.campos,t[2]]);
-                            let d = b+(this.length2d([p2,td])/this.length2d([p2,p3]))*(c-b);
-                            let p = a+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(d-a);
+                            let al = this.length3d([this.campos,t[0]]);
+                            let bl = this.length3d([this.campos,t[1]]);
+                            let cl = this.length3d([this.campos,t[2]]);
+                            let dl = bl+(this.length2d([p2,td])/this.length2d([p2,p3]))*(cl-bl);
+                            let pl = al+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(dl-al);
 
-                            if (zbuf[idex]>p) {
-                                zbuf[idex] = p;
+                            let ap = p1[2][1];
+                            let bp = p2[2][1];
+                            let cp = p3[2][1];
+                            let dp = bp+(this.length2d([p2,td])/this.length2d([p2,p3]))*(cp-bp);
+                            let pp = ap+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(dp-ap);
+
+                            if (pp>0&&zbuf[idex]>pl) {
+                                zbuf[idex] = pl;
                                 let index = idex*4;
-                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(10000/(p**2+1000)); // 面と平行光源の角度
+                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000/(pl**2+1000)); // 面と平行光源の角度
                                 iarr[index+0] = t[3][0]*light; // 赤の描画
                                 iarr[index+1] = t[3][1]*light; // 緑の描画
                                 iarr[index+2] = t[3][2]*light; // 青の描画
@@ -90,9 +96,9 @@ class tdDRAW {
     pos_3t2d(pos) {
         let p1 = this.rotate3d_x(this.rotate3d_z([pos[0]-this.campos[0],pos[1]-this.campos[1],pos[2]-this.campos[2]]));
         let l = Math.abs(14/(p1[1]));
-        let s = this.display[0]/10;
+        let s = this.display[0]/40;
         let d = [p1[0]*l*s+this.display[0]/2,-p1[2]*l*s+this.display[1]/2];
-        return [Math.floor(d[0]),Math.floor(d[1]),p1[1]<0];
+        return [Math.floor(d[0]),Math.floor(d[1]),p1];
     }
     sortP(ps) {
         let psl = ps.length;
@@ -100,7 +106,7 @@ class tdDRAW {
         let bu;let i=0;
         while (i<psl) {
             let j=0;let jm = psl-i-1;
-            while (j<jm) {
+            while (j<jm||j<100) {
                 if (ps[j][7]>ps[j+1][7]) {
                     bu = ps[j+1];
                     ps[j+1] = ps[j];
@@ -125,14 +131,13 @@ class tdDRAW {
     }
     
     is_p(l1, l2) { // intersection point from 2 lines
-        if (l1[0][0]==l1[1][0]) {l1[0][0]+=0.01;}
-        if (l2[0][0]==l2[1][0]) {l2[0][0]+=0.01;}
-        let a1 = (l1[1][1]-l1[0][1])/(l1[1][0]-l1[0][0]);
-        let b1 = l1[0][1]-a1*l1[0][0];
-        let a2 = (l2[1][1]-l2[0][1])/(l2[1][0]-l2[0][0]);
-        let b2 = l2[0][1]-a2*l2[0][0];
-        let x = (b2-b1)/(a1-a2);
-        let y = a1*x+b1;
+        // 参考 https://mf-atelier.sakura.ne.jp/mf-atelier2/a1/
+        let div = (l1[1][1]-l1[0][1])*(l2[1][0]-l2[0][0])-(l1[1][0]-l1[0][0])*(l2[1][1]-l2[0][1])
+        if (div==0) {return [null,null]}
+        let d1 = l2[0][1]*l2[1][0]-l2[0][0]*l2[1][1]
+        let d2 = l1[0][1]*l1[1][0]-l1[0][0]*l1[1][1]
+        let x = (d1*(l1[1][0]-l1[0][0])-d2*(l2[1][0]-l2[0][0]))/div
+        let y = (d1*(l1[1][1]-l1[0][1])-d2*(l2[1][1]-l2[0][1]))/div
         return [x,y];
     };
     squared_length3d(pos) {
