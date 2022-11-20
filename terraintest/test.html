@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head></head>
+<div>
+    <canvas>
+    </canvas>
+</div>
+<script>
+
+function get(x,y) {
+    console.log(x,y);
+    [xmin,xmax] = getchild(x,8);
+    [ymin,ymax] = getchild(y,8);
+    console.log(xmin,xmax,ymin,ymax);
+    if (x>(xmin+xmax)/2) {
+    }
+    else {
+    }
+}
+function getchild(v,s) {
+    let min = Math.floor(v/(2**s))*(2**s);
+    let max = min+(2**s);
+    return [min,max];
+}
+
+get(100,1000);
+
+</script>
