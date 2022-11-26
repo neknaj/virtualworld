@@ -4,6 +4,10 @@
 
 This is a Neknaj metavarce project.
 
+# Gallery
+![image](https://user-images.githubusercontent.com/79097169/204101379-29bf5bb5-fd5a-43ac-b549-88bf08c6e0e7.png)
+
+
 ## Related repositories  
 - [neknaj 3d library](https://github.com/neknaj/3d)
 
