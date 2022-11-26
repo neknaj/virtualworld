@@ -1,27 +1,40 @@
 <!DOCTYPE html>
-<head></head>
-<div>
-    <canvas>
-    </canvas>
-</div>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <canvas id="imgOut"></canvas>
+    </body>
+</html>
 <script>
-
-function get(x,y) {
-    console.log(x,y);
-    [xmin,xmax] = getchild(x,8);
-    [ymin,ymax] = getchild(y,8);
-    console.log(xmin,xmax,ymin,ymax);
-    if (x>(xmin+xmax)/2) {
+    function mkimg(x,y) {
+        let iarr = new Uint8ClampedArray(x*y*4);
+        for (let iy = 0; iy < y; iy++) {
+            for (let ix = 0; ix < x; ix++) {
+                let index = (iy*x+ix)*4; // index of position [ix,iy]
+                let value = getp([0,0,100],[0,1,0],[1,1,100],[1,0,250],[ix/100,iy/100])
+                iarr[index+0] = value; // Red
+                iarr[index+1] = value; // Green
+                iarr[index+2] = value; // Blue
+                iarr[index+3] = 250; // Alpha
+            }
+        }
+        let co = document.getElementById("imgOut");
+        co.height=y;co.width=x;co.getContext('2d').putImageData(new ImageData(iarr,x,y),0,0);
     }
-    else {
-    }
-}
-function getchild(v,s) {
-    let min = Math.floor(v/(2**s))*(2**s);
-    let max = min+(2**s);
-    return [min,max];
-}
+    mkimg(100,100)
 
-get(100,1000);
+function getp(a,b,c,d,p) {
+    let a1 = (p[0]-a[0])*(p[1]-a[1]);
+    let a2 = (p[0]-b[0])*(b[1]-p[1]);
+    let a3 = (c[0]-p[0])*(c[1]-p[1]);
+    let a4 = (d[0]-p[0])*(p[1]-d[1]);
+    return a[2]*a1+b[2]*a2+c[2]*a3+d[2]*a4;
+}
+let a = getp([0,0,10],[0,1,5],[1,1,9],[1,0,6],[0.5,0.5]);
+console.log(a)
+
+
 
 </script>
