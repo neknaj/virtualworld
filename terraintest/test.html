@@ -44,6 +44,8 @@ function getp(p) {
     let maxy = miny+(2**s);
    // console.log(minx,maxx,miny,maxy)
     let res = _getp([0,0,test8(minx,miny)],[0,1,test8(minx,maxy)],[1,1,test8(maxx,maxy)],[1,0,test8(maxx,miny)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx,miny)],[0,1,test8(maxx,maxy)],[1,1,test8(minx,maxy)],[1,0,test8(minx,miny)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     //console.log(res)
     return res;
 }
