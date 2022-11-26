@@ -15,25 +15,43 @@
 <script>
 const socket = io();
 
+function _getp(a,b,c,d,p) {
+    let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
+    let a3 = (c[0]-p[0])*(c[1]-p[1]);let a4 = (d[0]-p[0])*(p[1]-d[1]);
+    return (a[2]*a1+b[2]*a2+c[2]*a3+d[2]*a4);
+}
+function getp(p,s=1) {
+    let minx = Math.floor(p[0]/(2**s))*(2**s);let maxx = minx+(2**s);
+    let miny = Math.floor(p[1]/(2**s))*(2**s);let maxy = miny+(2**s);
+    let res = _getp([0,0,test8(minx,miny)],[0,1,test8(minx,maxy)],[1,1,test8(maxx,maxy)],[1,0,test8(maxx,miny)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx,miny)],[0,1,test8(maxx,maxy)],[1,1,test8(minx,maxy)],[1,0,test8(minx,miny)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    return res;
+}
+function height(x,y,max=8,min=2) {
+    let res = 0;
+    for (let i=min;i<max;i++) {res += getp([x,y],i)/((max-i+min)*2);}
+    return res;
+}
 
-function height(x,y) {
-    x+=50
-    y+=2
-    let base = 0.8;
+function test8(x,y) {
+    let base = 500;
     let ret = 0;
-    let times = 10;
-    for (let i=1;i<times;i++) {
-        ret += ((Math.cos(x*base/i+i)*Math.cos(y*base/i+i)))*((i**2.8));
+    let times = 3;
+    for (let i=1;i<=times;i++) {
+        ret += ((Math.sin(x*base/i+i)*Math.cos(y*base/i+i)))*((i**7));
         i++;
     }
-    return ret/times*0.04-5;
+    return Math.abs(ret/times*4+128)%1*100-46;
 }
 
 let obj = [];
 let color = [255,255,255];
-for (y=-0;y<1500;y+=2) {
-    for (x=-500;x<500;x+=2) {
+let water = [1,18,200];
+for (y=-0;y<200;y+=2) {
+    for (x=-300;x<300;x+=2) {
         y_=y;x_=x;
+        // 地面
         obj.push([[x_,y_,height(x,y)],[x_,y_-1,height(x,y-1)],[x_+1,y_-1,height(x+1,y-1)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+1,y_-1,height(x+1,y-1)],[x_+1,y_,height(x+1,y)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+1,y_,height(x+1,y)],[x_+1,y_+1,height(x+1,y+1)],color]);
@@ -42,11 +60,14 @@ for (y=-0;y<1500;y+=2) {
         obj.push([[x_,y_,height(x,y)],[x_-1,y_+1,height(x-1,y+1)],[x_-1,y_,height(x-1,y)],color]);
         obj.push([[x_,y_,height(x,y)],[x_-1,y_,height(x-1,y)],[x_-1,y_-1,height(x-1,y-1)],color]);
         obj.push([[x_,y_,height(x,y)],[x_-1,y_-1,height(x-1,y-1)],[x_,y_-1,height(x,y-1)],color]);
+        // 水面
+        obj.push([[x_-1,y_-1,0],[x_+1,y_-1,0],[x_+1,y_+1,0],water]);
+        obj.push([[x_-1,y_-1,0],[x_+1,y_+1,0],[x_-1,y_+1,0],water]);
     }
 }
 
 let tddraw = new tdDRAW();
-tddraw.setCamera([[0,0,10],[0,-20],[1920,1080]]);
+tddraw.setCamera([[0,0,18],[-10,0],[1920,1080]]);
 tddraw.setObj(obj);
 var co = document.getElementById("imgOut");
 var ctx = co.getContext('2d');
