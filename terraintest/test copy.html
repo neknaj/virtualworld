@@ -41,7 +41,6 @@
     //mkimg(-500,-500,500,500,1/10);
     mkimg(-50,-50,50,50,1/10);
 
-
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
     let a3 = (c[0]-p[0])*(c[1]-p[1]);let a4 = (d[0]-p[0])*(p[1]-d[1]);
@@ -61,7 +60,8 @@ function getheight(x,y,max=8,min=0) {
     return (0.002*res)**3+res*0.04+0.1;
 }
 function test8(x,y) {
-    let v = x*(2**12)+y+0;
+    var seed = 100000.01;
+    let v = x*(2**12)+y+seed;
     let base = 500;
     let ret = 0;
     let times = 3;

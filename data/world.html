@@ -31,10 +31,11 @@ function getp(p,s=1) {
 function getheight(x,y,max=8,min=0) {
     let res = 0;
     for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
-    return (0.002*res)**3+res*0.04+0.1;
+    return ((0.002*res)**3+res*0.04+0.1)*5;
 }
 function test8(x,y) {
-    let v = x*(2**12)+y+0;
+    var seed = 100000.01;
+    let v = x*(2**12)+y+seed;
     let base = 500;
     let ret = 0;
     let times = 3;
@@ -45,7 +46,7 @@ function test8(x,y) {
     return Math.abs(ret/times*4+128)%1*800-380;
 }
 
-var mapa = [-400,155,300,600];
+var mapa = [-800,155,-100,900];
 var buf = [];
 for (y=mapa[1];y<mapa[3];y+=1) {
     var bufc = [];
@@ -67,7 +68,7 @@ for (y=mapa[1]+1;y<mapa[3]-1;y+=2) {
         y_=y;x_=x;
         // 地面
         let value = height(x,y)
-        value = value*0.2+1
+        value = value*0.05+1
         color = [200-value*30,256-value*10,256-value*20]
         obj.push([[x_,y_,height(x,y)],[x_,y_-1,height(x,y-1)],[x_+1,y_-1,height(x+1,y-1)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+1,y_-1,height(x+1,y-1)],[x_+1,y_,height(x+1,y)],color]);
@@ -79,6 +80,7 @@ for (y=mapa[1]+1;y<mapa[3]-1;y+=2) {
         obj.push([[x_,y_,height(x,y)],[x_-1,y_-1,height(x-1,y-1)],[x_,y_-1,height(x,y-1)],color]);
         // 水面
         if (height(x,y)<1) {
+            water = [1,18,200-height(x,y)*0.2];
             obj.push([[x_-1,y_-1,0],[x_+1,y_-1,0],[x_+1,y_+1,0],water]);
             obj.push([[x_-1,y_-1,0],[x_+1,y_+1,0],[x_-1,y_+1,0],water]);
         }
@@ -92,6 +94,8 @@ tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 tddraw.setCamera([[-5,-8,7],[0,0],[640,480]]);
 tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
+tddraw.setCamera([[-300,110,100],[0,0],[640,480]]);
+tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[0,150,250],[0,-90],[640,480]]);
 
