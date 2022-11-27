@@ -7,6 +7,11 @@ This is a Neknaj metavarce project.
 # Gallery
 ![image](https://user-images.githubusercontent.com/79097169/204101379-29bf5bb5-fd5a-43ac-b549-88bf08c6e0e7.png)
 
+# Progress
+2022 10/30 - start this project  
+2022 10/30 - make a simple server with Node.js  
+2022 11/03 - make a simple terrain with sin curve  
+2022 11/27 - make a fractal terrain  
 
 ## Related repositories  
 - [neknaj 3d library](https://github.com/neknaj/3d)
