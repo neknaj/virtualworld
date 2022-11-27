@@ -49,8 +49,8 @@ function test8(x,y) {
 let obj = [];
 let color = [255,255,255];
 let water = [1,18,200];
-for (y=-10;y<200;y+=2) {
-    for (x=-200;x<100;x+=2) {
+for (y=-1;y<250;y+=2) {
+    for (x=-230;x<50;x+=2) {
         y_=y;x_=x;
         // 地面
         let value = height(x,y)
@@ -74,8 +74,8 @@ let tddraw = new tdDRAW();
 tddraw.setCamera([[0,0,18],[0,0],[1920,1080]]);
 
 tddraw.setCamera([[0,-90,70],[0,0],[1920,1080]]);
-tddraw.setCamera([[0,-10,2],[0,0],[1920,1080]]);
-tddraw.setCamera([[0,-90,70],[0,0],[1920,1080]]);
+tddraw.setCamera([[-5,-10,7],[0,0],[1920,1080]]);
+//tddraw.setCamera([[0,-90,70],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,100,190],[0,-90],[1920,1080]]);
 
 tddraw.setObj(obj);
