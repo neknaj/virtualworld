@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        r<pre id="showrfunc"></pre><br>
+        g<pre id="showgfunc"></pre><br>
+        b<pre id="showbfunc"></pre><br>
+        <canvas id="imgOut"></canvas><br>
+    </body>
+</html>
+<script>
+
+async function mkimg(_x,_y,x_,y_,rfunc,gfunc,bfunc) {
+        let x = (x_-_x);
+        let y = (y_-_y);
+        let iarr = new Uint8ClampedArray(x*y*4);
+        for (let iy = _y; iy < y_; iy++) {
+            for (let ix = _x; ix < x_; ix++) {
+                let index = ((iy-_y)*x+(ix-_x))*4; // index of position [ix,iy]
+                iarr[index+0] = rfunc(ix,iy); // Red
+                iarr[index+1] = gfunc(ix,iy); // Green
+                iarr[index+2] = bfunc(ix,iy); // Blue
+                iarr[index+3] = 255; // Alpha
+            }
+        }
+        console.log(x,y)
+        let co = document.getElementById("imgOut");
+        co.height=y;co.width=x;co.getContext('2d').putImageData(new ImageData(iarr,x,y),0,0);
+        document.getElementById("showrfunc").innerText = rfunc.toString();
+        document.getElementById("showgfunc").innerText = gfunc.toString();
+        document.getElementById("showbfunc").innerText = bfunc.toString();
+    }
+    mkimg(-500,-500,500,500,test9,test9,test9);
+
+
+function test9(x,y) {
+    let v = x*(2**10)+y;
+    let base = 500;
+    let ret = 0;
+    let times = 3;
+    for (let i=1;i<=times;i++) {
+        ret += ((Math.cos(v*base/i+i)))*((i**8));
+        i++;
+    }
+    return Math.abs(ret/times*4+128)%1*100-46;
+}
+
+
+</script>
+<style>
+    #imgOut {
+        border: 1px solid lightgrey;
+        image-rendering: pixelated;
+        max-width: 100%;
+        max-height: 100%;
+        min-width: 20%;
+    }
+    #showrfunc,#showgfunc,#showbfunc {
+        padding: 10px;
+        margin: 5px;
+        width: fit-content;
+        border-radius: 10px;
+        border: 1px solid lightgrey;
+        display: inline-block;
+    }
+</style>
