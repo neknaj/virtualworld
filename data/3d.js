@@ -76,7 +76,7 @@ class tdDRAW {
                             if (pp>0&&zbuf[idex]>pl) {
                                 zbuf[idex] = pl;
                                 let index = idex*4;
-                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000000/(pl**2+1000000)); // 面と平行光源の角度
+                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(100000/(pl**2+100000)); // 面と平行光源の角度
                                 iarr[index+0] = t[3][0]*light; // 赤の描画
                                 iarr[index+1] = t[3][1]*light; // 緑の描画
                                 iarr[index+2] = t[3][2]*light; // 青の描画

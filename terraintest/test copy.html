@@ -53,11 +53,10 @@ function getp(p,s=1) {
     res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
-function getheight(x,y,max=7,min=2) {
+function getheight(x,y,max=6,min=0) {
     let res = 0;
-    for (let i=min;i<=max;i++) {res += getp([x,y],i)/((max-i+1)*2);}
-    return 0.000000001*(res**5)+0.01*res
-    return 20*Math.tanh(0.01*res);
+    for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
+    return res*0.05;
 }
 function test8(x,y) {
     let v = x*(2**12)+y;
