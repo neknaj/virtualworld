@@ -46,7 +46,7 @@ class tdDRAW {
             let v13 = [t[2][0]-t[0][0],t[2][1]-t[0][1],t[2][2]-t[0][2]];
             let normal = this.VNormalized(this.VCProduct(v12,v13)); //法線ベクトル
             let angl = this.VIProduct(vl,normal); // 0<=normal<=1
-            let light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000/(polygons[i][4]+1000)); // 面と平行光源の角度
+            let light = (Math.max(angl,angl*0.1)*0.9+0.3)*(10000/(polygons[i][4]+10000)); // 面と平行光源の角度
             
             // 三角形を描画する範囲
             let xmax = Math.min(Math.max(p1[0],p2[0],p3[0]),this.display[0]);

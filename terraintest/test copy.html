@@ -38,7 +38,9 @@
         let co = document.getElementById("imgOut");
         co.height=y;co.width=x;co.getContext('2d').putImageData(new ImageData(iarr,x,y),0,0);
     }
-    mkimg(-500,-500,500,500,1/1);
+    //mkimg(-500,-500,500,500,1/10);
+    mkimg(-50,-50,50,50,1/10);
+
 
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
@@ -53,13 +55,13 @@ function getp(p,s=1) {
     res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
-function getheight(x,y,max=7,min=0) {
+function getheight(x,y,max=8,min=0) {
     let res = 0;
     for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
-    return (0.001*res)**3+res*0.03;
+    return (0.002*res)**3+res*0.04+0.1;
 }
 function test8(x,y) {
-    let v = x*(2**12)+y;
+    let v = x*(2**12)+y+0;
     let base = 500;
     let ret = 0;
     let times = 3;
@@ -67,7 +69,7 @@ function test8(x,y) {
         ret += ((Math.cos(v*base/i+i)**2))*((i**8));
         i++;
     }
-    return Math.abs(ret/times*4+128)%1*800-300;
+    return Math.abs(ret/times*4+128)%1*800-380;
 }
 
 </script>
