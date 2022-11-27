@@ -35,7 +35,7 @@ function ismin(x) {
 function getheight(x,y,max=8,min=0) {
     let res = 0;
     for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
-    return ismin(res)*(-4*Math.tanh(0.04*Math.abs(res)-2)+0.2*Math.abs(res)-4)*1
+    return ismin(res)*(-20*Math.tanh(0.009*Math.abs(res)-1)+0.2*Math.abs(res)-15.2)*1
     return (0.002*res)**3+res*0.04+0.1;
 }
 function test8(x,y) {
@@ -51,7 +51,7 @@ function test8(x,y) {
     return Math.abs(ret/times*4+128)%1*800-400;
 }
 
-var mapa = [-300,155,600,800];
+var mapa = [-200,155,300,600];
 var buf = [];
 for (y=mapa[1];y<mapa[3];y+=1) {
     var bufc = [];
@@ -100,7 +100,8 @@ tddraw.setCamera([[-5,-8,7],[0,0],[640,480]]);
 tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
 tddraw.setCamera([[100,110,100],[0,0],[640,480]]);
-tddraw.setCamera([[200,120,70],[0,0],[640,480]]);
+tddraw.setCamera([[200,151,12],[0,0],[640,480]]);
+tddraw.setCamera([[200,151,12],[0,0],[1920,1080]]);
 //tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);

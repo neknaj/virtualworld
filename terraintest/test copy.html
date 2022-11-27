@@ -61,7 +61,7 @@ function ismin(x) {
 function getheight(x,y,max=8,min=0) {
     let res = 0;
     for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
-    return ismin(res)*(-4*Math.tanh(0.04*Math.abs(res)-2)+0.2*Math.abs(res)-4)*1
+    return ismin(res)*(-20*Math.tanh(0.009*Math.abs(res)-1)+0.2*Math.abs(res)-15.2)*1
     return (0.002*res)**3+res*0.04+0.1;
 }
 function test8(x,y) {
