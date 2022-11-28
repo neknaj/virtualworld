@@ -4,11 +4,6 @@
 
 This is a Neknaj metavarce project.
 
-# Gallery
-![image](https://user-images.githubusercontent.com/79097169/204101379-29bf5bb5-fd5a-43ac-b549-88bf08c6e0e7.png)
-![image](https://user-images.githubusercontent.com/79097169/204148705-03b2cd66-a355-4701-9c43-c510d66f5232.png)
-![image](https://user-images.githubusercontent.com/79097169/204148686-bceab387-ae91-4c3c-a181-a6ec82950c09.png)
-
 # Progress
 2022 10/30 - start this project  
 2022 10/30 - make a simple server with Node.js  
@@ -42,3 +37,10 @@ node server.js
 ```
 ### Client
 Open the Web-Browser and open the server's URL
+
+
+# Gallery
+![image](https://user-images.githubusercontent.com/79097169/204101379-29bf5bb5-fd5a-43ac-b549-88bf08c6e0e7.png)
+![image](https://user-images.githubusercontent.com/79097169/204148705-03b2cd66-a355-4701-9c43-c510d66f5232.png)
+![image](https://user-images.githubusercontent.com/79097169/204148686-bceab387-ae91-4c3c-a181-a6ec82950c09.png)
+![image](https://user-images.githubusercontent.com/79097169/204266592-af010776-6681-4e0b-b09c-2c384584c2ae.png)
