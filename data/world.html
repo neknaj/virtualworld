@@ -46,9 +46,9 @@ function test8(x,y) {
     return Math.abs(ret/times*4+128)%1*400-210;
 }
 
-var mapa = [-6000,-100,6000,7000];
+var mapa = [-8000,0,8000,7000];
 var buf = [];
-let psize = 8
+let psize = 64
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
 for (y=mapa[1];y<mapa[3];y+=psize) {
@@ -101,7 +101,7 @@ tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
 tddraw.setCamera([[100,110,100],[0,0],[640,480]]);
 tddraw.setCamera([[200,151,12],[0,0],[640,480]]);
 tddraw.setCamera([[200,151,20],[0,0],[1920,1080]]);
-tddraw.setCamera([[-500,-200,700],[0,0],[1920,1080]]);
+tddraw.setCamera([[-500,-0,700],[0,0],[1920,1080]]);
 //tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);

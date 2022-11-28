@@ -1,6 +1,8 @@
 /* bem130 2022 */
 /* https://github.com/neknaj/3d */
 
+/* customized for Neknaj Virtual World */
+
 class tdDRAW {
     constructor() {
         this.campos = [0,0,0];
@@ -25,10 +27,17 @@ class tdDRAW {
         let y = this.display[1];
         let maxlen = 10000000;
         let iarr = new Uint8ClampedArray(x*y*4).fill(0);
-        let zbuf = new Array(x*y).fill(maxlen);
-        for (let i = 0; i < x*y; i++) {
-            iarr[i*4+3] = 255;
+        let sky = [70,120,240]
+        for (let iy = 0; iy < y; iy++) {
+            for (let ix = 0; ix < x; ix++) {
+                let index = (iy*x+ix)*4; // index of position [ix,iy]
+                iarr[index+0] = sky[0]; // Red
+                iarr[index+1] = sky[1]; // Green
+                iarr[index+2] = sky[2]; // Blue
+                iarr[index+3] = 255; // Alpha
+            }
         }
+        let zbuf = new Array(x*y).fill(maxlen);
         let polygons = this.obj;
         let vl = this.VNormalized([30,25,30]); // 平行光源
         this.trifv = [Math.sin(this.camangle[0]),Math.cos(this.camangle[0]),Math.sin(-this.camangle[1]),Math.cos(this.camangle[1])];
@@ -76,10 +85,11 @@ class tdDRAW {
                             if (pp>0&&zbuf[idex]>pl) {
                                 zbuf[idex] = pl;
                                 let index = idex*4;
-                                light = (Math.max(angl,angl*0.1)*0.9+0.3)*(5000000/(pl**2+5000000)); // 面と平行光源の角度
-                                iarr[index+0] = t[3][0]*light; // 赤の描画
-                                iarr[index+1] = t[3][1]*light; // 緑の描画
-                                iarr[index+2] = t[3][2]*light; // 青の描画
+                                light = (angl*0.9+0.3)*(2000000/(pl**2+2000000)); // 面と平行光源の角度
+                                let slight = 1-(2000000/(pl**2+2000000))
+                                iarr[index+0] = sky[0]*slight+t[3][0]*light; // 赤の描画
+                                iarr[index+1] = sky[1]*slight+t[3][1]*light; // 緑の描画
+                                iarr[index+2] = sky[2]*slight+t[3][2]*light; // 青の描画
                             }
                         }
                     }
