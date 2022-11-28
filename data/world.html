@@ -11,9 +11,9 @@
     </body>
 </html>
 <script src="3d.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<!-- <script src="/socket.io/socket.io.js"></script> -->
 <script>
-const socket = io();
+//const socket = io();
 
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
@@ -34,7 +34,6 @@ function getheight(x,y,max=12,min=0) {
     }
     return (-10*Math.tanh(0.09*res-0.5)+res-3)*4
 }
-    var seed = 2;
 function test8(x,y) {
     let v = x*(2**12)+y+seed;
     let base = 500;
@@ -44,14 +43,16 @@ function test8(x,y) {
         ret += ((Math.cos(v*base/i+i)**2))*((i**8));
         i++;
     }
-    return Math.abs(ret/times*4+128)%1*400-210;
+    return Math.abs(ret/times*4+128)%1*400-200;
 }
 
 var mapa = [-6500,100,5000,7500];
+var seed = Math.random()*100;
 var buf = [];
-let psize = 32
+let psize = 16
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
+console.log("seed:",seed)
 console.log("start calc")
 for (y=mapa[1];y<mapa[3];y+=psize) {
     var bufc = [];
@@ -76,8 +77,8 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
         y_=y;x_=x;
         // 地面
         let value = height(x,y)
-        value = value*0.02+0.1
-        color = [240-value*30,256-value*10,256-value*20]
+        value = value*0.3
+        color = [132-value, 131-value, 79-value]
         obj.push([[x_,y_,height(x,y)],[x_,y_-p,height(x,y-p)],[x_+p,y_-p,height(x+p,y-p)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+p,y_-p,height(x+p,y-p)],[x_+p,y_,height(x+p,y)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+p,y_,height(x+p,y)],[x_+p,y_+p,height(x+p,y+p)],color]);
@@ -87,8 +88,8 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
         obj.push([[x_,y_,height(x,y)],[x_-p,y_,height(x-p,y)],[x_-p,y_-p,height(x-p,y-p)],color]);
         obj.push([[x_,y_,height(x,y)],[x_-p,y_-p,height(x-p,y-p)],[x_,y_-p,height(x,y-p)],color]);
         // 水面
-        if (height(x,y)<1) {
-            water = [1,18,200+height(x,y)*0.2];
+        if (height(x,y)<2) {
+            water = [1,1,30-height(x,y)*0.2];
             obj.push([[x_-p,y_-p,0],[x_+p,y_-p,0],[x_+p,y_+p,0],water]);
             obj.push([[x_-p,y_-p,0],[x_+p,y_+p,0],[x_-p,y_+p,0],water]);
         }
@@ -149,6 +150,7 @@ resizeImg(); // first resize
 </script>
 <style>
     body {
+        width: 100vw;
         overflow: hidden;
     }
     #top {
