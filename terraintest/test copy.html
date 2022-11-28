@@ -39,7 +39,7 @@
         co.height=y;co.width=x;co.getContext('2d').putImageData(new ImageData(iarr,x,y),0,0);
     }
     //mkimg(-500,-500,500,500,1/10);
-    mkimg(-50,-50,50,50,1/20);
+    mkimg(-100,-100,100,100,1/100);
 
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
@@ -54,7 +54,7 @@ function getp(p,s=1) {
     res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
-function getheight(x,y,max=9,min=0) {
+function getheight(x,y,max=12,min=0) {
     let res = 0;
     for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
     return -1000*Math.tanh(0.00295*res*1.7-0.1)+3*res*1.7-99.5
