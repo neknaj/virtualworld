@@ -44,11 +44,12 @@ function test8(x,y) {
     return Math.abs(ret/times*4+128)%1*400-210;
 }
 
-var mapa = [-8000,0,8000,7000];
+var mapa = [-6500,100,5000,7500];
 var buf = [];
-let psize = 8
+let psize = 32
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
+console.log("start calc")
 for (y=mapa[1];y<mapa[3];y+=psize) {
     var bufc = [];
     for (x=Math.floor(mapa[0]/psize)*psize;x<mapa[2];x+=psize) {
@@ -64,6 +65,8 @@ function height(x,y) {
 let obj = [];
 let color = [255,255,255];
 let water = [1,18,200];
+
+console.log("start making polygon")
 for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
     let p = psize;
     for (x=mapa[0]+psize;x<mapa[2]-psize;x+=psize*2) {
@@ -89,6 +92,7 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
     }
 }
 
+
 let tddraw = new tdDRAW();
 tddraw.setCamera([[0,0,18],[0,0],[640,480]]);
 
@@ -99,7 +103,7 @@ tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
 tddraw.setCamera([[100,110,100],[0,0],[640,480]]);
 tddraw.setCamera([[200,151,12],[0,0],[640,480]]);
 tddraw.setCamera([[200,151,20],[0,0],[1920,1080]]);
-tddraw.setCamera([[-500,-0,700],[0,0],[1920,1080]]);
+tddraw.setCamera([[-500,150,700],[0,0],[1920,1080]]);
 //tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);
@@ -109,6 +113,7 @@ var co = document.getElementById("imgOut");
 var ctx = co.getContext('2d');
 co.height=tddraw.display[1];co.width=tddraw.display[0];
 
+console.log("start render")
 let img = tddraw.getImg();
 ctx.putImageData(img,0,0);
 

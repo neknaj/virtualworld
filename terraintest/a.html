@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>2d paint soft</title>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div id="main">
+            <canvas id="output"></canvas>
+        </div>
+    </body>
+</html>
+<script src="./paint.js"></script>
+<script src="./2d.js"></script>
+<script>
+
+function getp(a,b,p) {
+    return a[1]*(b[0]-p)+b[1]*(p-a[0])
+}
+
+function sample() {
+    paint = new Paint("output")
+    paint.setup(100,100)
+
+    paint.paintLine([100,100],[0,20],[0,0,255])
+    a=[0,20]
+    b=[1,100]
+    for (let i=0;i<=1;i+=0.1) {
+        console.log(i,getp(a,b,i))
+        paint.paintLine([Math.floor(i*100),Math.floor(getp(a,b,i))],[Math.floor((i+0.1)*100),Math.floor(getp(a,b,i+0.1))],[0,255,0])
+    }
+
+    paint.update()
+}
+sample()
+
+</script>
+<style>
+    #output {
+        width: 500px;
+        image-rendering: pixelated;
+    }
+</style>

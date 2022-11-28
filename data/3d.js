@@ -25,9 +25,9 @@ class tdDRAW {
         this.frame++;
         let x = this.display[0];
         let y = this.display[1];
-        let maxlen = 10000000;
+        let maxlen = 8000;
         let iarr = new Uint8ClampedArray(x*y*4).fill(0);
-        let sky = [70,120,240]
+        let sky = [114, 174, 239]
         for (let iy = 0; iy < y; iy++) {
             for (let ix = 0; ix < x; ix++) {
                 let index = (iy*x+ix)*4; // index of position [ix,iy]
@@ -85,8 +85,8 @@ class tdDRAW {
                             if (pp>0&&zbuf[idex]>pl) {
                                 zbuf[idex] = pl;
                                 let index = idex*4;
-                                light = (angl*0.9+0.3)*(2000000/(pl**2+2000000)); // 面と平行光源の角度
-                                let slight = 1-(2000000/(pl**2+2000000))
+                                light = (angl*0.9+0.3)*(1500000/(pl**2+1500000)); // 面と平行光源の角度
+                                let slight = 1-(1500000/(pl**2+1500000))
                                 iarr[index+0] = sky[0]*slight+t[3][0]*light; // 赤の描画
                                 iarr[index+1] = sky[1]*slight+t[3][1]*light; // 緑の描画
                                 iarr[index+2] = sky[2]*slight+t[3][2]*light; // 青の描画
