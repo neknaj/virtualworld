@@ -10,10 +10,9 @@ console.log(`The server has started and is listening on port number: ${port}`);
 
 function server_request(req, res) {
     const head = { "Content-Type": "text/html" };
-    const rescode = 200;
+    let rescode = 200;
 
     let resd = "";
-    let nfflag = false;
     console.log(req.url)
     if(req.url.startsWith("/index")){ // title page head["Location"] = "/";
       rescode = 302;
@@ -23,8 +22,8 @@ function server_request(req, res) {
     } else {
       try {
         const path = {
-          "/": "top.html",
-          "/world": "world.html"
+          "/": "/top.html",
+          "/world": "/world.html"
         }[req.url] || req.url;
         resd += fs.readFileSync(`data${path}`, 'utf8');
         head["Content-Type"] = { // Content-Typeを設定
