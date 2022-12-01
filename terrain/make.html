@@ -2,6 +2,19 @@
 <html>
     <head>
         <link href="style.css" rel="stylesheet">
+        <meta name="description" content="地形の自動生成">
+        <meta name="application-name" content="Neknaj Virtual World - Terrain Generator"/>
+        <meta name="twitter:site" content="@bem130">
+        <meta name="twitter:creator" content="@bem130">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Neknaj Virtual World - Terrain Generator">
+        <meta name="twitter:description" content="自然な地形を自動でランダムに生成します">
+        <meta name="twitter:image:src" content="https://neknaj.github.io/virtualworld/terrain/title.png">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Neknaj Virtual World - Terrain Generator">
+        <meta property="og:description" content="自然な地形を自動でランダムに生成します">
+        <meta property="og:site_name" content="Neknaj Virtual World">
+        <meta property="og:image" content="https://neknaj.github.io/virtualworld/terrain/title.png">
     </head>
     <body>
         <div id="img_area">
@@ -10,7 +23,7 @@
         <a href="/" id="top">top</a>
     </body>
 </html>
-<script src="3d.js"></script>
+<script src="./3d.js"></script>
 <!-- <script src="/socket.io/socket.io.js"></script> -->
 <script>
 //const socket = io();
@@ -150,6 +163,8 @@ resizeImg(); // first resize
 </script>
 <style>
     body {
+        color: rgb(245, 250, 255);
+        background-color: rgb(37, 73, 73);
         width: 100vw;
         overflow: hidden;
     }
@@ -163,5 +178,12 @@ resizeImg(); // first resize
         left: 0;
         top: 0;
         transform-origin: top left;
+    }
+    a {
+        color: rgb(201, 234, 255);
+        padding: 2px;
+        margin: 1px;
+        border: 1px solid black;
+        border-radius: 3px;
     }
 </style>
