@@ -1,4 +1,32 @@
-import tdDRAW from "./3d";
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="style.css" rel="stylesheet">
+        <meta name="description" content="地形の自動生成">
+        <meta name="application-name" content="Neknaj Virtual World - Terrain Generator"/>
+        <meta name="twitter:site" content="@bem130">
+        <meta name="twitter:creator" content="@bem130">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Neknaj Virtual World - Terrain Generator">
+        <meta name="twitter:description" content="自然な地形を自動でランダムに生成します">
+        <meta name="twitter:image:src" content="https://neknaj.github.io/virtualworld/terrain/title.png">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Neknaj Virtual World - Terrain Generator">
+        <meta property="og:description" content="自然な地形を自動でランダムに生成します">
+        <meta property="og:site_name" content="Neknaj Virtual World">
+        <meta property="og:image" content="https://neknaj.github.io/virtualworld/terrain/title.png">
+    </head>
+    <body>
+        <div id="img_area">
+            <canvas id="imgOut" style="image-rendering: pixelated;"></canvas>
+        </div>
+        <a href="/" id="top">top</a>
+    </body>
+</html>
+<script src="./3d.js"></script>
+<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script>
+//const socket = io();
 
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
@@ -9,7 +37,7 @@ function getp(p,s=1) {
     let minx = Math.floor(p[0]/(2**s))*(2**s);let maxx = minx+(2**s);
     let miny = Math.floor(p[1]/(2**s))*(2**s);let maxy = miny+(2**s);
     //let res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
-    const res = _getp([0,0,test8(maxx+s,maxy)],[0,1,test8(maxx+s,miny)],[1,1,test8(minx+s,miny)],[1,0,test8(minx+s,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx+s,maxy)],[0,1,test8(maxx+s,miny)],[1,1,test8(minx+s,miny)],[1,0,test8(minx+s,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
 function getheight(x,y,max=12,min=0) {
@@ -39,9 +67,9 @@ mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.flo
 console.log(mapa)
 console.log("seed:",seed)
 console.log("start calc")
-for (let y=mapa[1];y<mapa[3];y+=psize) {
+for (y=mapa[1];y<mapa[3];y+=psize) {
     var bufc = [];
-    for (let x=Math.floor(mapa[0]/psize)*psize;x<mapa[2];x+=psize) {
+    for (x=Math.floor(mapa[0]/psize)*psize;x<mapa[2];x+=psize) {
         bufc.push(getheight(x,y));
     }
     buf.push(bufc);
@@ -56,10 +84,10 @@ let color = [255,255,255];
 let water = [1,18,200];
 
 console.log("start making polygon")
-for (let y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
+for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
     let p = psize;
-    for (let x=mapa[0]+psize;x<mapa[2]-psize;x+=psize*2) {
-        const y_=y;const x_=x;
+    for (x=mapa[0]+psize;x<mapa[2]-psize;x+=psize*2) {
+        y_=y;x_=x;
         // 地面
         let value = height(x,y)
         value = value*0.3
@@ -106,27 +134,56 @@ console.log("start render")
 let img = tddraw.getImg();
 ctx.putImageData(img,0,0);
 
+</script>
+<script>
 // resize window
 function resizeImg() {
-    dw = tddraw.display[0];
-    dh = tddraw.display[1];
-    let bottom_area = 0;
-    let rw = 0;let rh = 0;
-    let ww = window.innerWidth;
-    let wh = window.innerHeight-bottom_area;
-    let csc = 1
-    hcsc = ww/dw; wcsc = wh/dh;
-    if (hcsc>wcsc) {
-        csc = wcsc; rw = (ww - dw*csc)/2;
-    }
-    else {
-        csc = hcsc; rh = (wh - dh*csc)/2;
-    }
-    document.getElementById("imgOut").style.marginTop = (rh).toString()+"px";
-    document.getElementById("imgOut").style.marginBottom = (rh).toString()+"px";
-    document.getElementById("imgOut").style.marginLeft = (rw).toString()+"px";
-    document.getElementById("imgOut").style.marginRight = (rw).toString()+"px";
-    document.getElementById("imgOut").style.transform = "scale("+csc.toString()+","+csc.toString()+")";
-};
+        dw = tddraw.display[0];
+        dh = tddraw.display[1];
+        let bottom_area = 0;
+        let rw = 0;let rh = 0;
+        let ww = window.innerWidth;
+        let wh = window.innerHeight-bottom_area;
+        let csc = 1
+        hcsc = ww/dw; wcsc = wh/dh;
+        if (hcsc>wcsc) {
+            csc = wcsc; rw = (ww - dw*csc)/2;
+        }
+        else {
+            csc = hcsc; rh = (wh - dh*csc)/2;
+        }
+        document.getElementById("imgOut").style.marginTop = (rh).toString()+"px";
+        document.getElementById("imgOut").style.marginBottom = (rh).toString()+"px";
+        document.getElementById("imgOut").style.marginLeft = (rw).toString()+"px";
+        document.getElementById("imgOut").style.marginRight = (rw).toString()+"px";
+        document.getElementById("imgOut").style.transform = "scale("+csc.toString()+","+csc.toString()+")";
+    };
 window.onresize = resizeImg;
 resizeImg(); // first resize
+</script>
+<style>
+    body {
+        color: rgb(245, 250, 255);
+        background-color: rgb(37, 73, 73);
+        width: 100vw;
+        overflow: hidden;
+    }
+    #top {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    #imgOut {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: top left;
+    }
+    a {
+        color: rgb(201, 234, 255);
+        padding: 2px;
+        margin: 1px;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+</style>

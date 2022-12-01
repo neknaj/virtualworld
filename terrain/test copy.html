@@ -15,7 +15,7 @@
         for (let iy = _y; iy < y_; iy++) {
             for (let ix = _x; ix < x_; ix++) {
                 let index = ((y-(iy-_y+1))*x+(ix-_x))*4; // index of position [ix,iy]
-                let value = getheight(ix/scale,iy/scale)/15;
+                let value = getheight(ix/scale,iy/scale)/40;
                 //value = _getp([0,0,100],[0,1,0],[1,1,100],[1,0,250],[ix/10,iy/10])
                 //value = _getp([0,0,100],[0,2,0],[2,2,100],[2,0,250],[ix/10,iy/10])
                 if (value<0) {
@@ -39,7 +39,7 @@
         co.height=y;co.width=x;co.getContext('2d').putImageData(new ImageData(iarr,x,y),0,0);
     }
     //mkimg(-500,-500,500,500,1/10);
-    mkimg(-100,-100,100,100,1/100);
+    mkimg(-100,-100,100,100,1/300);
 
 function _getp(a,b,c,d,p) {
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
@@ -49,16 +49,19 @@ function _getp(a,b,c,d,p) {
 function getp(p,s=1) {
     let minx = Math.floor(p[0]/(2**s))*(2**s);let maxx = minx+(2**s);
     let miny = Math.floor(p[1]/(2**s))*(2**s);let maxy = miny+(2**s);
-    let res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    //let res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
+    res = _getp([0,0,test8(maxx+s,maxy)],[0,1,test8(maxx+s,miny)],[1,1,test8(minx+s,miny)],[1,0,test8(minx+s,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
 function getheight(x,y,max=12,min=0) {
     let res = 0;
-    for (let i=min;i<=max;i++) {res += getp([x,y],i)/(2**(max-i));}
-    return -1000*Math.tanh(0.00295*res*1.7-0.1)+3*res*1.7-99.5
+    for (let i=min;i<=max;i++) {
+        res += getp([x,y],i)/(2**(max-i));
+    }
+    return (-10*Math.tanh(0.09*res-0.5)+res-3)*4
 }
 function test8(x,y) {
-    var seed = 10000;
+    var seed = 2;
     let v = x*(2**12)+y+seed;
     let base = 500;
     let ret = 0;
@@ -67,7 +70,7 @@ function test8(x,y) {
         ret += ((Math.cos(v*base/i+i)**2))*((i**8));
         i++;
     }
-    return Math.abs(ret/times*4+128)%1*400-210;
+    return Math.abs(ret/times*4+128)%1*400-200;
 }
 
 </script>

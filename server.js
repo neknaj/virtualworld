@@ -13,7 +13,6 @@ function server_request(req, res) {
     let rescode = 200;
 
     let resd = "";
-    console.log(req.url)
     if(req.url.startsWith("/index")){ // title page head["Location"] = "/";
       rescode = 302;
     } else if(req.url.startsWith("/getworld")){ // get world data 
@@ -44,7 +43,7 @@ function server_request(req, res) {
 
 socket.on('connection', function (req) {
 
-  console.log("a connection");
+  console.log("started connection");
 
   socket.emit("sendMessageToClient", {value:"a connection"});
 
