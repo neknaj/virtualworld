@@ -3,7 +3,7 @@
 
 /* customized for Neknaj Virtual World */
 
-class tdDRAW {
+export default class tdDRAW {
     constructor() {
         this.campos = [0,0,0];
         this.camangle = [0,0];
