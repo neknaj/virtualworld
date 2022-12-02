@@ -8,6 +8,8 @@
     </body>
 </html>
 <script>
+    var seed = Math.random()*100;
+
     function mkimg(_x,_y,x_,y_,scale) {
         let x = (x_-_x);
         let y = (y_-_y);
@@ -42,6 +44,7 @@
     mkimg(-100,-100,100,100,1/300);
 
 function _getp(a,b,c,d,p) {
+    p = [0.5*Math.tanh(2*p[0]-1)+0.5+0.23*p[0]-0.115,0.5*Math.tanh(2*p[1]-1)+0.5+0.23*p[1]-0.115]
     let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
     let a3 = (c[0]-p[0])*(c[1]-p[1]);let a4 = (d[0]-p[0])*(p[1]-d[1]);
     return (a[2]*a1+b[2]*a2+c[2]*a3+d[2]*a4);
@@ -61,7 +64,6 @@ function getheight(x,y,max=12,min=0) {
     return (-10*Math.tanh(0.09*res-0.5)+res-3)*4
 }
 function test8(x,y) {
-    var seed = 2;
     let v = x*(2**12)+y+seed;
     let base = 500;
     let ret = 0;
