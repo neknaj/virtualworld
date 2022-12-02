@@ -50,20 +50,20 @@ function getheight(x,y,max=12,min=0) {
 }
 function test8(x,y) {
     let v = x*(2**12)+y+seed;
-    let base = 500;
+    let base = 5001;
     let ret = 0;
-    let times = 3;
+    let times = 1;
     for (let i=1;i<=times;i++) {
-        ret += ((Math.cos(v*base/i+i)**2))*((i**8));
+        ret += ((Math.sin(v*base/(2**i)+i)))*(10**i);
         i++;
     }
-    return Math.abs(ret/times*4+128)%1*400-200;
+    return Math.abs(ret/times*4+128)%1*400-210;
 }
 
-var mapa = [-6500,100,5000,7500];
+var mapa = [-1500,-10,1500,1500];
 var seed = Math.random()*100;
 var buf = [];
-let psize = 16
+let psize = 3
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
 console.log("seed:",seed)
@@ -91,7 +91,7 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
         y_=y;x_=x;
         // 地面
         let value = height(x,y)
-        value = value*0.3
+        value = value*0.05
         color = [132-value, 131-value, 79-value]
         obj.push([[x_,y_,height(x,y)],[x_,y_-p,height(x,y-p)],[x_+p,y_-p,height(x+p,y-p)],color]);
         obj.push([[x_,y_,height(x,y)],[x_+p,y_-p,height(x+p,y-p)],[x_+p,y_,height(x+p,y)],color]);
@@ -125,6 +125,7 @@ tddraw.setCamera([[-500,150,700],[0,0],[1920,1080]]);
 //tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);
+tddraw.setCamera([[0,0,Math.max(height(0,0)+1.7,0)],[0,0],[1920,1080]]);
 
 tddraw.setObj(obj);
 var co = document.getElementById("imgOut");
