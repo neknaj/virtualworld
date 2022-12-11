@@ -25,7 +25,7 @@ class tdDRAW {
         this.frame++;
         let x = this.display[0];
         let y = this.display[1];
-        let maxlen = 8000;
+        let maxlen = 100000;
         let iarr = new Uint8ClampedArray(x*y*4).fill(0);
         let sky = [114, 174, 239]
         for (let iy = 0; iy < y; iy++) {
@@ -117,7 +117,7 @@ class tdDRAW {
         while (i<psl) {
             let j=0;let jm = psl-i-1;
             while (j<jm||j<100) {
-                if (ps[j][7]>ps[j+1][7]) {
+                if (ps[j][4]>ps[j+1][4]) {
                     bu = ps[j+1];
                     ps[j+1] = ps[j];
                     ps[j] = bu;

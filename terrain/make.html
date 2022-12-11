@@ -24,9 +24,7 @@
     </body>
 </html>
 <script src="./3d.js"></script>
-<!-- <script src="/socket.io/socket.io.js"></script> -->
 <script>
-//const socket = io();
 
 function _getp(a,b,c,d,p) {
     p = [0.5*Math.tanh(2*p[0]-1)+0.5+0.23*p[0]-0.115,0.5*Math.tanh(2*p[1]-1)+0.5+0.23*p[1]-0.115]
@@ -37,11 +35,10 @@ function _getp(a,b,c,d,p) {
 function getp(p,s=1) {
     let minx = Math.floor(p[0]/(2**s))*(2**s);let maxx = minx+(2**s);
     let miny = Math.floor(p[1]/(2**s))*(2**s);let maxy = miny+(2**s);
-    //let res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     res = _getp([0,0,test8(maxx+s,maxy)],[0,1,test8(maxx+s,miny)],[1,1,test8(minx+s,miny)],[1,0,test8(minx+s,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
     return res;
 }
-function getheight(x,y,max=12,min=0) {
+function getheight(x,y,max=12,min=1) {
     let res = 0;
     for (let i=min;i<=max;i++) {
         res += getp([x,y],i)/(2**(max-i));
@@ -49,12 +46,13 @@ function getheight(x,y,max=12,min=0) {
     return (-10*Math.tanh(0.09*res-0.5)+res-3)*4
 }
 function test8(x,y) {
-    let v = x*(2**12)+y+seed;
+    x+=10
+    let v = Math.sin(x*10+y)+seed;
     let base = 5001;
     let ret = 0;
     let times = 1;
     for (let i=1;i<=times;i++) {
-        ret += ((Math.sin(v*base/(2**i)+i)))*(10**i);
+        ret += ((Math.cos(v*base/(2**i)+i)))*(5**i);
         i++;
     }
     return Math.abs(ret/times*4+128)%1*400-210;
@@ -63,7 +61,7 @@ function test8(x,y) {
 var mapa = [-1500,-10,1500,1500];
 var seed = Math.random()*100;
 var buf = [];
-let psize = 3
+let psize = 16
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
 console.log("seed:",seed)
@@ -78,7 +76,6 @@ for (y=mapa[1];y<mapa[3];y+=psize) {
 function height(x,y) {
     return buf[(y-mapa[1])/psize][(x-mapa[0])/psize];
 }
-//height = getheight
 
 let obj = [];
 let color = [255,255,255];
@@ -112,19 +109,7 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
 
 
 let tddraw = new tdDRAW();
-tddraw.setCamera([[0,0,18],[0,0],[640,480]]);
 
-tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
-tddraw.setCamera([[-5,-8,7],[0,0],[640,480]]);
-tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
-tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
-tddraw.setCamera([[100,110,100],[0,0],[640,480]]);
-tddraw.setCamera([[200,151,12],[0,0],[640,480]]);
-tddraw.setCamera([[200,151,20],[0,0],[1920,1080]]);
-tddraw.setCamera([[-500,150,700],[0,0],[1920,1080]]);
-//tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
-//tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
-//tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);
 tddraw.setCamera([[0,0,Math.max(height(0,0)+1.7,0)],[0,0],[1920,1080]]);
 
 tddraw.setObj(obj);
