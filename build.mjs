@@ -15,7 +15,7 @@ const external = [...dependencies, ...peerDependencies];
 
 /** @type {import('esbuild').BuildOptions} */
 const options = {
-  entryPoints: ["./src/world.js"],
+  entryPoints: ["./src/world.ts"],
   minify: true,
   bundle: true,
   outfile: "./data/world.js",
@@ -35,6 +35,7 @@ if (process.env.WATCH === "true") {
       }
     },
   };
+  options.sourcemap = "linked";
 }
 
 build(options).catch((err) => {
