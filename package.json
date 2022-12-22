@@ -1,6 +1,14 @@
 {
+  "name": "virtualworld",
+  "scripts": {
+    "dev": "WATCH=true node build.mjs & node server.js"
+  },
   "dependencies": {
     "commander": "^9.4.1",
     "socket.io": "^4.5.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.16",
+    "typescript": "^4.6.4"
   }
 }
