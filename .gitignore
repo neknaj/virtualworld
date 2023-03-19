@@ -1,2 +1,7 @@
 node_modules/
+<<<<<<< HEAD
 *.copy.*
+=======
+data/world.js*
+rome.json
+>>>>>>> 712fe771a6dc943687ecd67c8fd7d3d12e86a51c

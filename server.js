@@ -1,18 +1,19 @@
-const port = 8080;
 const http = require("http");
 const fs = require('fs');
+
+const port = 8080;
+
 const server = http.createServer(server_request);
 server.listen(port);
 const socket = require('socket.io')(server);
 console.log(`The server has started and is listening on port number: ${port}`);
 
 function server_request(req, res) {
-    let head = {
-        "Content-Type": "text/html",
-    }
+    const head = { "Content-Type": "text/html" };
     let rescode = 200;
 
     let resd = "";
+<<<<<<< HEAD
     let nfflag = false;
     switch (req.url.split(".")[0]) {
     case "/index": // title page
@@ -56,7 +57,32 @@ function server_request(req, res) {
     resd += "url: ";
     resd += req.url;
     resd += "</p>";
+=======
+    if(req.url.startsWith("/index")){ // title page head["Location"] = "/";
+      rescode = 302;
+    } else if(req.url.startsWith("/getworld")){ // get world data 
+        resd += "comming soon";
+        resd += "<a href=\"/\">top</a>";
+    } else {
+      try {
+        const path = {
+          "/": "/top.html",
+          "/world": "/world.html"
+        }[req.url] || req.url;
+        resd += fs.readFileSync(`data${path}`, 'utf8');
+        head["Content-Type"] = { // Content-Typeを設定
+          js:  "application/javascript",
+          css: "text/css"
+        }[req.url.split(".").reverse()[0]] || "text/html";
+      } catch (e) {
+        // 404 not found
+        rescode = 404;
+        resd += `<h1> Not found</h1>
+                <p>url: ${req.url}</p>`
+      }
+>>>>>>> 712fe771a6dc943687ecd67c8fd7d3d12e86a51c
     }
+    
     res.writeHead(rescode, head);
     res.end(resd);
 }
@@ -66,7 +92,11 @@ function server_request(req, res) {
 let clients = {}
 socket.on('connection', function (req) {
 
+<<<<<<< HEAD
     console.log("a connection");
+=======
+  console.log("started connection");
+>>>>>>> 712fe771a6dc943687ecd67c8fd7d3d12e86a51c
 
     socket.emit("sendMessageToClient", {value:"a connection"});    
 
