@@ -11,58 +11,40 @@
     </body>
 </html>
 <script src="3d.js"></script>
-<!-- <script src="/socket.io/socket.io.js"></script> -->
+<script src="/socket.io/socket.io.js"></script>
 <script>
-//const socket = io();
+const socket = io();
 
-function _getp(a,b,c,d,p) {
-    let a1 = (p[0]-a[0])*(p[1]-a[1]);let a2 = (p[0]-b[0])*(b[1]-p[1]);
-    let a3 = (c[0]-p[0])*(c[1]-p[1]);let a4 = (d[0]-p[0])*(p[1]-d[1]);
-    return (a[2]*a1+b[2]*a2+c[2]*a3+d[2]*a4);
-}
-function getp(p,s=1) {
-    let minx = Math.floor(p[0]/(2**s))*(2**s);let maxx = minx+(2**s);
-    let miny = Math.floor(p[1]/(2**s))*(2**s);let maxy = miny+(2**s);
-    //let res = _getp([0,0,test8(maxx,maxy)],[0,1,test8(maxx,miny)],[1,1,test8(minx,miny)],[1,0,test8(minx,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
-    res = _getp([0,0,test8(maxx+s,maxy)],[0,1,test8(maxx+s,miny)],[1,1,test8(minx+s,miny)],[1,0,test8(minx+s,maxy)],[(p[0]-minx)/2**s,(p[1]-miny)/2**s]);
-    return res;
-}
-function getheight(x,y,max=12,min=0) {
-    let res = 0;
-    for (let i=min;i<=max;i++) {
-        res += getp([x,y],i)/(2**(max-i));
-    }
-    return (-10*Math.tanh(0.09*res-0.5)+res-3)*4
-}
-function test8(x,y) {
-    let v = x*(2**12)+y+seed;
-    let base = 500;
-    let ret = 0;
-    let times = 3;
-    for (let i=1;i<=times;i++) {
-        ret += ((Math.cos(v*base/i+i)**2))*((i**8));
-        i++;
-    }
-    return Math.abs(ret/times*4+128)%1*400-200;
-}
+let clients = {}
 
-var mapa = [-6500,100,5000,7500];
+socket.on('sharecamera', function(data){
+    clients[data.id] = {camera:data.value,lastupdate:Date.now()};
+});
+
+function clearclients() {
+    ids = Object.keys(clients);
+    for (i=0;i<ids.length;i++) {
+        if (Date.now()-clients[ids[i]].lastupdate>5000) {
+            delete clients[ids[i]];
+        }
+    }
+}
+setInterval(clearclients, 1000);
+
+
+</script>
+<script>
+
+var mapa = [-10,-10,10,10];
 var seed = Math.random()*100;
 var buf = [];
-let psize = 16
+let psize = 1
 mapa = [Math.floor(mapa[0]/psize)*psize,Math.floor(mapa[1]/psize)*psize,Math.floor(mapa[2]/psize)*psize,Math.floor(mapa[3]/psize)*psize]
 console.log(mapa)
 console.log("seed:",seed)
 console.log("start calc")
-for (y=mapa[1];y<mapa[3];y+=psize) {
-    var bufc = [];
-    for (x=Math.floor(mapa[0]/psize)*psize;x<mapa[2];x+=psize) {
-        bufc.push(getheight(x,y));
-    }
-    buf.push(bufc);
-}
 function height(x,y) {
-    return buf[(y-mapa[1])/psize][(x-mapa[0])/psize];
+    return (x+y)%2;
 }
 //height = getheight
 
@@ -79,20 +61,20 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
         let value = height(x,y)
         value = value*0.3
         color = [132-value, 131-value, 79-value]
-        obj.push([[x_,y_,height(x,y)],[x_,y_-p,height(x,y-p)],[x_+p,y_-p,height(x+p,y-p)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_+p,y_-p,height(x+p,y-p)],[x_+p,y_,height(x+p,y)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_+p,y_,height(x+p,y)],[x_+p,y_+p,height(x+p,y+p)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_+p,y_+p,height(x+p,y+p)],[x_,y_+p,height(x,y+p)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_,y_+p,height(x,y+p)],[x_-p,y_+p,height(x-p,y+p)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_-p,y_+p,height(x-p,y+p)],[x_-p,y_,height(x-p,y)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_-p,y_,height(x-p,y)],[x_-p,y_-p,height(x-p,y-p)],color]);
-        obj.push([[x_,y_,height(x,y)],[x_-p,y_-p,height(x-p,y-p)],[x_,y_-p,height(x,y-p)],color]);
+        obj.push([[x_,y_,height(x,y)],[x_,y_-p,height(x,y-p)],[x_+p,y_-p,height(x+p,y-p)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_+p,y_-p,height(x+p,y-p)],[x_+p,y_,height(x+p,y)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_+p,y_,height(x+p,y)],[x_+p,y_+p,height(x+p,y+p)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_+p,y_+p,height(x+p,y+p)],[x_,y_+p,height(x,y+p)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_,y_+p,height(x,y+p)],[x_-p,y_+p,height(x-p,y+p)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_-p,y_+p,height(x-p,y+p)],[x_-p,y_,height(x-p,y)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_-p,y_,height(x-p,y)],[x_-p,y_-p,height(x-p,y-p)],color,[false]]);
+        obj.push([[x_,y_,height(x,y)],[x_-p,y_-p,height(x-p,y-p)],[x_,y_-p,height(x,y-p)],color,[false]]);
         // 水面
-        if (height(x,y)<2) {
-            water = [1,1,30-height(x,y)*0.2];
-            obj.push([[x_-p,y_-p,0],[x_+p,y_-p,0],[x_+p,y_+p,0],water]);
-            obj.push([[x_-p,y_-p,0],[x_+p,y_+p,0],[x_-p,y_+p,0],water]);
-        }
+        // if (height(x,y)<1) {
+        //     water = [1,1,30-height(x,y)*0.2];
+        //     obj.push([[x_-p,y_-p,0],[x_+p,y_-p,0],[x_+p,y_+p,0],water]);
+        //     obj.push([[x_-p,y_-p,0],[x_+p,y_+p,0],[x_-p,y_+p,0],water]);
+        // }
     }
 }
 
@@ -100,14 +82,7 @@ for (y=mapa[1]+psize;y<mapa[3]-psize;y+=psize*2) {
 let tddraw = new tdDRAW();
 tddraw.setCamera([[0,0,18],[0,0],[640,480]]);
 
-tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
-tddraw.setCamera([[-5,-8,7],[0,0],[640,480]]);
-tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
-tddraw.setCamera([[10,155,3],[0,0],[640,480]]);
-tddraw.setCamera([[100,110,100],[0,0],[640,480]]);
-tddraw.setCamera([[200,151,12],[0,0],[640,480]]);
-tddraw.setCamera([[200,151,20],[0,0],[1920,1080]]);
-tddraw.setCamera([[-500,150,700],[0,0],[1920,1080]]);
+tddraw.setCamera([[0,0,4],[0,0],[1920,1080]]);
 //tddraw.setCamera([[-300,110,100],[0,0],[1920,1080]]);
 //tddraw.setCamera([[0,-90,70],[0,0],[640,480]]);
 //tddraw.setCamera([[100,350,250],[0,-90],[640,480]]);
@@ -117,9 +92,96 @@ var co = document.getElementById("imgOut");
 var ctx = co.getContext('2d');
 co.height=tddraw.display[1];co.width=tddraw.display[0];
 
-console.log("start render")
-let img = tddraw.getImg();
-ctx.putImageData(img,0,0);
+
+</script>
+<script>
+
+
+function tick() {
+    keyinput();
+    socket.emit('camera', [tddraw.campos,tddraw.camangle]);
+    ctx.putImageData(tddraw.getImg(),0,0);
+}
+setInterval(tick,60)
+
+// keyboard
+document.onkeydown = function(e) {
+    keystatus_d[event.keyCode] = true;
+    keys = Object.keys(keystatus_d);
+    for (i=0;i<keys.length;i++) {
+        if (keys[i] in keyw_f) {
+            keyw_f[keys[i]]();
+        }
+    }
+};
+document.onkeyup = function(e) {
+    keystatus_d[event.keyCode] = false;
+};
+
+let keystatus_d = {};
+function keyinput() {
+    keys = Object.keys(keystatus_d);
+    for (i=0;i<keys.length;i++) {
+        if (keystatus_d[keys[i]]) {
+            if (keystatus_d[16]) {
+                if (keys[i] in keyw_s) {
+                    keyw_s[keys[i]]();
+                }
+                else {
+                    if (keys[i] in keyw) {
+                        keyw[keys[i]]();
+                    }
+                }
+            }
+            else {
+                if (keys[i] in keyw) {
+                    keyw[keys[i]]();
+                }
+            }
+        }
+    }
+}
+
+
+function rotate2d(pos,r) {
+    var _x = pos[0];_y = pos[1];
+    let cosr = Math.cos(r);
+    let sinr = Math.sin(r);
+    var x = _x*cosr-_y*sinr;
+    var y = _x*sinr+_y*cosr;
+    return [x,y];
+}
+function move(l) {
+        los = rotate2d([0,l],-tddraw.camangle[0]);
+        bfx = tddraw.campos[0];
+        bfy = tddraw.campos[1];
+        tddraw.campos[0] += los[0];
+        tddraw.campos[1] += los[1];
+    }
+
+let keyw = {} // 通常
+{
+    keyw[87] = ()=>move(0.3);
+    keyw[83] = ()=>move(-0.3);
+    keyw[65] = ()=>tddraw.camangle[0]-=0.1;
+    keyw[68] = ()=>tddraw.camangle[0]+=0.1;
+    keyw[82] = ()=>tddraw.camangle[1]+=0.2;
+    keyw[70] = ()=>tddraw.camangle[1]-=0.2;
+}
+let keyw_s = {} // shift押し中
+{
+    keyw_s[87] = ()=>move(0.8);
+    keyw_s[83] = ()=>move(-0.8);
+    keyw_s[65] = ()=>tddraw.camangle[0]-=0.2;
+    keyw_s[68] = ()=>tddraw.camangle[0]+=0.2;
+    keyw_s[82] = ()=>tddraw.camangle[1]+=0.4;
+    keyw_s[70] = ()=>tddraw.camangle[1]-=0.4;
+}
+let keyw_f = {} // イベント取得時
+{
+    keyw_f[32] = function() {//space
+    }
+}
 
 </script>
 <script>

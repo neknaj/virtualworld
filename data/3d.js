@@ -1,7 +1,8 @@
+/* Neknaj 3D Lib - Javascript */
 /* bem130 2022 */
 /* https://github.com/neknaj/3d */
 
-/* customized for Neknaj Virtual World */
+
 
 class tdDRAW {
     constructor() {
@@ -25,21 +26,18 @@ class tdDRAW {
         this.frame++;
         let x = this.display[0];
         let y = this.display[1];
-        let maxlen = 100000;
+        let maxlen = 100;
+        let sky = [114,174,239];
         let iarr = new Uint8ClampedArray(x*y*4).fill(0);
-        let sky = [114, 174, 239]
-        for (let iy = 0; iy < y; iy++) {
-            for (let ix = 0; ix < x; ix++) {
-                let index = (iy*x+ix)*4; // index of position [ix,iy]
-                iarr[index+0] = sky[0]; // Red
-                iarr[index+1] = sky[1]; // Green
-                iarr[index+2] = sky[2]; // Blue
-                iarr[index+3] = 255; // Alpha
-            }
-        }
         let zbuf = new Array(x*y).fill(maxlen);
+        for (let i = 0; i < x*y; i++) {
+            iarr[i*4+0] = sky[0];
+            iarr[i*4+1] = sky[1];
+            iarr[i*4+2] = sky[2];
+            iarr[i*4+3] = 255;
+        }
         let polygons = this.obj;
-        let vl = this.VNormalized([30,25,30]); // 平行光源
+        let vl = this.VNormalized([30,10,20]); // 平行光源
         this.trifv = [Math.sin(this.camangle[0]),Math.cos(this.camangle[0]),Math.sin(-this.camangle[1]),Math.cos(this.camangle[1])];
         for (let i=0;i<polygons.length;i++) {
             let t = polygons[i];
@@ -55,7 +53,6 @@ class tdDRAW {
             let v13 = [t[2][0]-t[0][0],t[2][1]-t[0][1],t[2][2]-t[0][2]];
             let normal = this.VNormalized(this.VCProduct(v12,v13)); //法線ベクトル
             let angl = this.VIProduct(vl,normal); // 0<=normal<=1
-            let light = (Math.max(angl,angl*0.1)*0.9+0.3)*(10000/(polygons[i][4]+10000)); // 面と平行光源の角度
             
             // 三角形を描画する範囲
             let xmax = Math.min(Math.max(p1[0],p2[0],p3[0]),this.display[0]);
@@ -63,33 +60,76 @@ class tdDRAW {
             let ymax = Math.min(Math.max(p1[1],p2[1],p3[1]),this.display[1]);
             let ymin = Math.max(Math.min(p1[1],p2[1],p3[1]),0);
 
-            for (let iy = ymin; iy < ymax; iy++) {
-                for (let ix = xmin; ix < xmax; ix++) {
-                    let idex = iy*x+ix; // 描画するアドレス
-                    if (true) { // 既に描画されていない確認
-                        if (this.inclusion([ix,iy],[p1,p2,p3])) { // 三角形の内外判定
-                            let td = this.is_p( [p1,[ix,iy]],[p2,p3]);
+            let al = this.length3d([this.campos,t[0]]);
+            let bl = this.length3d([this.campos,t[1]]);
+            let cl = this.length3d([this.campos,t[2]]);
+            let ap = p1[2][1];
+            let bp = p2[2][1];
+            let cp = p3[2][1];
+            if (t.length>4&&t[4][0]) { // テクスチャあり
+                for (let iy = ymin; iy < ymax; iy++) {
+                    for (let ix = xmin; ix < xmax; ix++) {
+                        let idex = iy*x+ix; // 描画するアドレス
+                        if (true) { // 既に描画されていない確認
+                            if (this.inclusion([ix,iy],[p1,p2,p3])) { // 三角形の内外判定
+                                let td = this.is_p( [p1,[ix,iy]],[p2,p3]);
 
-                            let al = this.length3d([this.campos,t[0]]);
-                            let bl = this.length3d([this.campos,t[1]]);
-                            let cl = this.length3d([this.campos,t[2]]);
-                            let dl = bl+(this.length2d([p2,td])/this.length2d([p2,p3]))*(cl-bl);
-                            let pl = al+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(dl-al);
-
-                            let ap = p1[2][1];
-                            let bp = p2[2][1];
-                            let cp = p3[2][1];
-                            let dp = bp+(this.length2d([p2,td])/this.length2d([p2,p3]))*(cp-bp);
-                            let pp = ap+(this.length2d([p1,[ix,iy]])/this.length2d([p1,td]))*(dp-ap);
-
-                            if (pp>0&&zbuf[idex]>pl) {
-                                zbuf[idex] = pl;
-                                let index = idex*4;
-                                light = (angl*0.9+0.3)*(1500000/(pl**2+1500000)); // 面と平行光源の角度
-                                let slight = 1-(1500000/(pl**2+1500000))
-                                iarr[index+0] = sky[0]*slight+t[3][0]*light; // 赤の描画
-                                iarr[index+1] = sky[1]*slight+t[3][1]*light; // 緑の描画
-                                iarr[index+2] = sky[2]*slight+t[3][2]*light; // 青の描画
+                                // let tdd = [bd*(t[4][4][0]-t[4][3][0])/(bd+dc)+t[4][3][0],dc*(t[4][3][1]-t[4][4][1])/(bd+dc)+t[4][4][1]];
+                                // let tpd = [ap*(tdd[0]-t[4][2][0])/(ap+pd)+t[4][2][0],pd*(t[4][2][1]-tdd[1])/(ap+pd)+tdd[1]];
+                                // let tptx = t[4][5][t[4][1]].data;
+                                let tpd
+                                {
+                                    let pos = td;
+                                    let i2p = [t[4][2],t[4][3],t[4][4]]
+                                    let i1p = [p1,p2,p3]
+                                    let bd=this.length2d([i1p[1],pos]);let dc=this.length2d([i1p[2],pos]);let ap=this.length2d([i1p[0],[ix,iy]]);let pd=this.length2d([pos,[ix,iy]]);
+                                    let x1=i2p[1][0];let x2=i2p[2][0];let y1=i2p[1][1];let y2=i2p[2][1];let dd=[(bd*(x2-x1))/(bd+dc)+x1,(dc*(y1-y2))/(bd+dc)+y2];
+                                    x1=i2p[0][0];x2=dd[0];y1=i2p[0][1];y2=dd[1];tpd=[(ap*(x2-x1))/(ap+pd)+x1,(pd*(y1-y2))/(ap+pd)+y2];
+                                }
+                                let tptx = t[4][5][t[4][1]].data;
+    
+                                let l1 = this.length2d([p2,td])/this.length2d([p2,p3]);
+                                let l2 = this.length2d([p1,[ix,iy]])/this.length2d([p1,td]);
+    
+                                let pl = al+l2*(bl+l1*(cl-bl)-al);
+                                let pp = ap+l2*(bp+l1*(cp-bp)-ap);
+    
+                                if (pp>0&&zbuf[idex]>pl) {
+                                    zbuf[idex] = pl;
+                                    let index = idex*4;
+                                    let cindex = (Math.floor(tpd[0])+Math.floor(tpd[1])*t[4][5][t[4][1]].width)*4;
+                                    let light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000/(pl**2+1000)); // 面と平行光源の角度
+                                    iarr[index+0] = tptx[cindex+0]*light; // 赤の描画
+                                    iarr[index+1] = tptx[cindex+1]*light; // 緑の描画
+                                    iarr[index+2] = tptx[cindex+2]*light; // 青の描画
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else { // テクスチャなし
+                for (let iy = ymin; iy < ymax; iy++) {
+                    for (let ix = xmin; ix < xmax; ix++) {
+                        let idex = iy*x+ix; // 描画するアドレス
+                        if (true) { // 既に描画されていない確認
+                            if (this.inclusion([ix,iy],[p1,p2,p3])) { // 三角形の内外判定
+                                let td = this.is_p( [p1,[ix,iy]],[p2,p3]);
+    
+                                let l1 = this.length2d([p2,td])/this.length2d([p2,p3]);
+                                let l2 = this.length2d([p1,[ix,iy]])/this.length2d([p1,td]);
+    
+                                let pl = al+l2*(bl+l1*(cl-bl)-al);
+                                let pp = ap+l2*(bp+l1*(cp-bp)-ap);
+    
+                                if (pp>0&&zbuf[idex]>pl) {
+                                    zbuf[idex] = pl;
+                                    let index = idex*4;
+                                    let light = (Math.max(angl,angl*0.1)*0.9+0.3)*(1000/(pl**2+1000)); // 面と平行光源の角度
+                                    iarr[index+0] = t[3][0]*light; // 赤の描画
+                                    iarr[index+1] = t[3][1]*light; // 緑の描画
+                                    iarr[index+2] = t[3][2]*light; // 青の描画
+                                }
                             }
                         }
                     }
@@ -117,7 +157,7 @@ class tdDRAW {
         while (i<psl) {
             let j=0;let jm = psl-i-1;
             while (j<jm||j<100) {
-                if (ps[j][4]>ps[j+1][4]) {
+                if (ps[j][5]<ps[j+1][5]) {
                     bu = ps[j+1];
                     ps[j+1] = ps[j];
                     ps[j] = bu;
@@ -132,7 +172,7 @@ class tdDRAW {
     }
     updateLengthToPolygon(ps) {
         for (let i=0;i<ps.length;i++) {
-            ps[i][4] = this.squared_length3d([this.campos,this.gcot([ps[i][0],ps[i][1],ps[i][2]])]);
+            ps[i][5] = this.squared_length3d([this.campos,this.gcot([ps[i][0],ps[i][1],ps[i][2]])]);
         }
         return ps;
     }
@@ -182,7 +222,7 @@ class tdDRAW {
         let ab = a[0]*b[1]-a[1]*b[0];
         let bc = b[0]*c[1]-b[1]*c[0];
         let ca = c[0]*a[1]-c[1]*a[0];
-        return ab<=0&&bc<=0&&ca<=0;
+        return (ab<=0&&bc<=0&&ca<=0)||(ab>=0&&bc>=0&&ca>=0);
     };
     rotate3d_x(pos) { // x軸のみの回転
         return [pos[0],pos[1]*this.trifv[3]-pos[2]*this.trifv[2],pos[1]*this.trifv[2]+pos[2]*this.trifv[3]];
